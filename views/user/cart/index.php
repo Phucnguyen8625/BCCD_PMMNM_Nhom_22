@@ -134,9 +134,9 @@
                             <span class="font-bold text-price text-2xl"><?php echo number_format($total_price, 0, ',', '.'); ?>đ</span>
                         </div>
                         
-                        <button class="w-full bg-primary hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg transition shadow-md flex items-center justify-center">
+                        <a href="phuc_modules/checkout/index.php" class="w-full bg-primary hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg transition shadow-md flex items-center justify-center">
                             TIẾN HÀNH THANH TOÁN <i class="fas fa-arrow-right ml-2 text-xs"></i>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

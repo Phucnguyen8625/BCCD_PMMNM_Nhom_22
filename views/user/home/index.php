@@ -127,7 +127,7 @@
                         <img src="<?php echo $comic['image']; ?>" alt="Cover" class="w-full h-full object-cover">
                         <!-- Add to cart overlay popup -->
                         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
-                            <a href="index.php?controller=cart&action=add&id=1" class="bg-secondary text-white font-bold py-2 px-4 rounded-xl flex items-center transform scale-90 group-hover:scale-100 transition">
+                            <a href="index.php?controller=cart&action=add&id=<?php echo isset($comic['id']) ? $comic['id'] : 1; ?>" class="bg-secondary text-white font-bold py-2 px-4 rounded-xl flex items-center transform scale-90 group-hover:scale-100 transition">
                                 <i class="fas fa-cart-plus mr-2"></i> Mua ngay
                             </a>
                         </div>

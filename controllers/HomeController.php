@@ -36,6 +36,7 @@ class HomeController {
         // Mock data selling comics (Truyện đề cử / Nổi bật - still mock for layout)
         $featuredComics = [
             [
+                'id' => 1,
                 'title' => 'Conan Tập Kỷ Niệm 100',
                 'price' => '35.000',
                 'old_price' => '45.000',
@@ -43,6 +44,7 @@ class HomeController {
                 'image' => 'https://via.placeholder.com/300x400/1e1e2f/ffffff?text=Comic+1'
             ],
             [
+                'id' => 2,
                 'title' => 'One Piece Tập Đặc Biệt',
                 'price' => '25.000',
                 'old_price' => '',
@@ -50,6 +52,7 @@ class HomeController {
                 'image' => 'https://via.placeholder.com/300x400/2d3748/ffffff?text=Comic+2'
             ],
             [
+                'id' => 3,
                 'title' => 'Naruto Bản Tiếng Việt',
                 'price' => '20.000',
                 'old_price' => '25.000',
@@ -57,6 +60,7 @@ class HomeController {
                 'image' => 'https://via.placeholder.com/300x400/4a5568/ffffff?text=Comic+3'
             ],
             [
+                'id' => 4,
                 'title' => 'Doraemon Truyện Dài',
                 'price' => '18.000',
                 'old_price' => '',
@@ -64,6 +68,7 @@ class HomeController {
                 'image' => 'https://via.placeholder.com/300x400/718096/ffffff?text=Comic+4'
             ],
             [
+                'id' => 1,
                 'title' => 'Thám tử Kindaichi',
                 'price' => '30.000',
                 'old_price' => '40.000',
