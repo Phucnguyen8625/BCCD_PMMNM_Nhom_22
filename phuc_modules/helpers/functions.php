@@ -111,7 +111,29 @@ function currentUserName(): string
 
 function cartItems(): array
 {
-    return $_SESSION['cart'] ?? [];
+    if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+        return [];
+    }
+
+    $pdo = db();
+    $items = [];
+    foreach ($_SESSION['cart'] as $id => $qty) {
+        if (is_array($qty)) {
+            return $_SESSION['cart'];
+        }
+        $stmt = $pdo->prepare('SELECT id, name, price, image_url FROM comics WHERE id = ?');
+        $stmt->execute([$id]);
+        if ($comic = $stmt->fetch()) {
+            $items[] = [
+                'comic_id' => $comic['id'],
+                'name' => $comic['name'],
+                'price' => $comic['price'],
+                'quantity' => $qty,
+                'image_url' => $comic['image_url'],
+            ];
+        }
+    }
+    return $items;
 }
 
 function cartTotals(): array
@@ -151,20 +173,8 @@ function ensureSeedSessionData(): void
 
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [
-            [
-                'comic_id' => 1,
-                'name' => 'One Piece Tập 1',
-                'price' => 25000,
-                'quantity' => 2,
-                'image_url' => '',
-            ],
-            [
-                'comic_id' => 2,
-                'name' => 'Doraemon Tập 5',
-                'price' => 18000,
-                'quantity' => 1,
-                'image_url' => '',
-            ],
+            1 => 2,
+            2 => 1,
         ];
     }
 }

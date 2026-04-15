@@ -6,15 +6,28 @@ function vnpayBuildSignedQuery(array $params): string
 {
     ksort($params);
 
-    $hashData = [];
+    $query = '';
+    $hashdata = '';
+    $i = 0;
+
     foreach ($params as $key => $value) {
-        $hashData[] = urlencode((string) $key) . '=' . urlencode((string) $value);
+        if ($value === null || $value === '') {
+            continue;
+        }
+
+        if ($i === 1) {
+            $hashdata .= '&' . urlencode((string) $key) . '=' . urlencode((string) $value);
+        } else {
+            $hashdata .= urlencode((string) $key) . '=' . urlencode((string) $value);
+            $i = 1;
+        }
+
+        $query .= urlencode((string) $key) . '=' . urlencode((string) $value) . '&';
     }
 
-    $query = http_build_query($params);
-    $secureHash = hash_hmac('sha512', implode('&', $hashData), VNPAY_HASH_SECRET);
+    $secureHash = hash_hmac('sha512', $hashdata, trim(VNPAY_HASH_SECRET));
 
-    return $query . '&vnp_SecureHash=' . $secureHash;
+    return rtrim($query, '&') . '&vnp_SecureHash=' . $secureHash;
 }
 
 function vnpayVerifyResponse(array $input): bool
@@ -24,40 +37,68 @@ function vnpayVerifyResponse(array $input): bool
     }
 
     $receivedHash = (string) $input['vnp_SecureHash'];
+
     unset($input['vnp_SecureHash'], $input['vnp_SecureHashType']);
 
     ksort($input);
 
-    $hashData = [];
+    $hashdata = '';
+    $i = 0;
+
     foreach ($input as $key => $value) {
-        $hashData[] = urlencode((string) $key) . '=' . urlencode((string) $value);
+        if ($value === null || $value === '') {
+            continue;
+        }
+
+        if ($i === 1) {
+            $hashdata .= '&' . urlencode((string) $key) . '=' . urlencode((string) $value);
+        } else {
+            $hashdata .= urlencode((string) $key) . '=' . urlencode((string) $value);
+            $i = 1;
+        }
     }
 
-    $calculated = hash_hmac('sha512', implode('&', $hashData), VNPAY_HASH_SECRET);
+    $calculatedHash = hash_hmac('sha512', $hashdata, trim(VNPAY_HASH_SECRET));
 
-    return hash_equals($calculated, $receivedHash);
+    return hash_equals($calculatedHash, $receivedHash);
 }
 
 function createVnpayPaymentUrl(array $order, array $payment, ?string $bankCode = null): string
 {
+    $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR']
+        ?? $_SERVER['REMOTE_ADDR']
+        ?? '127.0.0.1';
+
+    if (str_contains($clientIp, ',')) {
+        $clientIp = trim(explode(',', $clientIp)[0]);
+    }
+
+    $txnRef = preg_replace('/[^A-Za-z0-9]/', '', (string) $payment['transaction_code']);
+
+    if ($txnRef === null || $txnRef === '') {
+        $txnRef = 'ORD' . (int) $order['id'] . date('YmdHis');
+    }
+
+    $orderInfo = 'Thanh toan don hang ' . (int) $order['id'];
+
     $params = [
-        'vnp_Version' => '2.1.0',
-        'vnp_Command' => 'pay',
-        'vnp_TmnCode' => VNPAY_TMN_CODE,
-        'vnp_Amount' => (int) round(((float) $order['total_amount']) * 100),
+        'vnp_Version'    => '2.1.0',
+        'vnp_Command'    => 'pay',
+        'vnp_TmnCode'    => trim(VNPAY_TMN_CODE),
+        'vnp_Amount'     => (int) round(((float) $order['total_amount']) * 100),
         'vnp_CreateDate' => (string) $payment['vnp_create_date'],
-        'vnp_CurrCode' => 'VND',
-        'vnp_IpAddr' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
-        'vnp_Locale' => 'vn',
-        'vnp_OrderInfo' => 'Thanh toan don hang #' . $order['id'],
-        'vnp_OrderType' => 'other',
-        'vnp_ReturnUrl' => VNPAY_RETURN_URL,
-        'vnp_TxnRef' => (string) $payment['transaction_code'],
+        'vnp_CurrCode'   => 'VND',
+        'vnp_IpAddr'     => $clientIp,
+        'vnp_Locale'     => 'vn',
+        'vnp_OrderInfo'  => $orderInfo,
+        'vnp_OrderType'  => 'other',
+        'vnp_ReturnUrl'  => trim(VNPAY_RETURN_URL),
+        'vnp_TxnRef'     => $txnRef,
         'vnp_ExpireDate' => date('YmdHis', strtotime('+15 minutes')),
     ];
 
     if ($bankCode !== null && $bankCode !== '') {
-        $params['vnp_BankCode'] = $bankCode;
+        $params['vnp_BankCode'] = trim($bankCode);
     }
 
     return VNPAY_PAY_URL . '?' . vnpayBuildSignedQuery($params);
@@ -66,17 +107,26 @@ function createVnpayPaymentUrl(array $order, array $payment, ?string $bankCode =
 function queryVnpayTransaction(array $payment): array
 {
     $requestId = uniqid('query_', true);
+    $requestId = substr(str_replace('.', '', $requestId), 0, 32);
+
+    $serverIp = $_SERVER['SERVER_ADDR'] ?? $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+
+    $txnRef = preg_replace('/[^A-Za-z0-9]/', '', (string) $payment['transaction_code']);
+
+    if ($txnRef === null || $txnRef === '') {
+        $txnRef = 'ORD' . (int) $payment['order_id'] . date('YmdHis');
+    }
 
     $payload = [
-        'vnp_RequestId' => substr(str_replace('.', '', $requestId), 0, 32),
-        'vnp_Version' => '2.1.0',
-        'vnp_Command' => 'querydr',
-        'vnp_TmnCode' => VNPAY_TMN_CODE,
-        'vnp_TxnRef' => (string) $payment['transaction_code'],
-        'vnp_OrderInfo' => 'Truy van giao dich don hang #' . $payment['order_id'],
+        'vnp_RequestId'       => $requestId,
+        'vnp_Version'         => '2.1.0',
+        'vnp_Command'         => 'querydr',
+        'vnp_TmnCode'         => trim(VNPAY_TMN_CODE),
+        'vnp_TxnRef'          => $txnRef,
+        'vnp_OrderInfo'       => 'Truy van giao dich don hang ' . (int) $payment['order_id'],
         'vnp_TransactionDate' => (string) $payment['vnp_create_date'],
-        'vnp_CreateDate' => date('YmdHis'),
-        'vnp_IpAddr' => $_SERVER['SERVER_ADDR'] ?? '127.0.0.1',
+        'vnp_CreateDate'      => date('YmdHis'),
+        'vnp_IpAddr'          => $serverIp,
     ];
 
     $hashData = implode('|', [
@@ -91,7 +141,7 @@ function queryVnpayTransaction(array $payment): array
         $payload['vnp_OrderInfo'],
     ]);
 
-    $payload['vnp_SecureHash'] = hash_hmac('sha512', $hashData, VNPAY_HASH_SECRET);
+    $payload['vnp_SecureHash'] = hash_hmac('sha512', $hashData, trim(VNPAY_HASH_SECRET));
 
     $ch = curl_init(VNPAY_QUERY_URL);
     curl_setopt_array($ch, [

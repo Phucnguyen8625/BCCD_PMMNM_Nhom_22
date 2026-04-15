@@ -24,6 +24,7 @@ function db(): PDO
     ];
 
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+    $pdo->exec("set names utf8mb4");
 
     return $pdo;
 }

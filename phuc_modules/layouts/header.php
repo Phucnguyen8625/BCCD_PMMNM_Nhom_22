@@ -7,6 +7,26 @@ $flash = getFlash();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($pageTitle ?? APP_NAME) ?></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#4c2d73', secondary: '#f7941d', price: '#e53e3e', }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #ededed; }
+        .page-header { background: #4c2d73; background-image: url('https://st.nettruyen.work/Data/Sites/1/media/bn-bg.jpg'); background-size: cover; background-position: center; padding: 1.5rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .page-header h1 { font-family: 'Verdana'; font-size: 2rem; font-weight: bold; text-shadow: 2px 2px 0px #f7941d; margin: 0; }
+        .main-nav a { color: white; margin-left: 1rem; font-weight: 500; padding-bottom: 0.25rem; border-bottom: 2px solid transparent; transition: border-color 0.3s; }
+        .main-nav a:hover { border-color: #f7941d; }
+        .user-box { display: none; }
+    </style>
     <link rel="stylesheet" href="<?= e(buildBasePath('assets/css/app.css')) ?>">
 </head>
 <body>

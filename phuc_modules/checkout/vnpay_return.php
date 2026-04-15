@@ -7,16 +7,34 @@ ensureSeedSessionData();
 
 $pageTitle = 'Kết quả thanh toán VNPAY';
 
+function normalizeVnpayPayDate(?string $payDate): ?string
+{
+    $payDate = trim((string) $payDate);
+
+    if ($payDate === '') {
+        return null;
+    }
+
+    $dt = DateTime::createFromFormat('YmdHis', $payDate);
+
+    if ($dt === false) {
+        return null;
+    }
+
+    return $dt->format('Y-m-d H:i:s');
+}
+
 $input = $_GET;
 $isValid = vnpayVerifyResponse($input);
 
-$txnRef = trim($_GET['vnp_TxnRef'] ?? '');
-$responseCode = trim($_GET['vnp_ResponseCode'] ?? '');
-$transactionStatus = trim($_GET['vnp_TransactionStatus'] ?? '');
-$transactionNo = trim($_GET['vnp_TransactionNo'] ?? '');
-$payDate = trim($_GET['vnp_PayDate'] ?? '');
-$bankCode = trim($_GET['vnp_BankCode'] ?? '');
-$vnpAmount = (int) ($_GET['vnp_Amount'] ?? 0);
+$txnRef = trim($input['vnp_TxnRef'] ?? '');
+$responseCode = trim($input['vnp_ResponseCode'] ?? '');
+$transactionStatus = trim($input['vnp_TransactionStatus'] ?? '');
+$transactionNo = trim($input['vnp_TransactionNo'] ?? '');
+$payDate = trim($input['vnp_PayDate'] ?? '');
+$bankCode = trim($input['vnp_BankCode'] ?? '');
+$vnpAmount = (int) ($input['vnp_Amount'] ?? 0);
+$paidAt = normalizeVnpayPayDate($payDate);
 
 $pdo = db();
 
@@ -26,13 +44,17 @@ $message = 'Không tìm thấy giao dịch.';
 $success = false;
 
 if ($txnRef !== '') {
-    $stmt = $pdo->prepare('SELECT * FROM payments WHERE transaction_code = :transaction_code LIMIT 1');
-    $stmt->execute(['transaction_code' => $txnRef]);
+    $stmt = $pdo->prepare('SELECT * FROM payments WHERE transaction_id = :transaction_code LIMIT 1');
+    $stmt->execute([
+        'transaction_code' => $txnRef,
+    ]);
     $payment = $stmt->fetch();
 
     if ($payment) {
         $orderStmt = $pdo->prepare('SELECT * FROM orders WHERE id = :id LIMIT 1');
-        $orderStmt->execute(['id' => $payment['order_id']]);
+        $orderStmt->execute([
+            'id' => $payment['order_id'],
+        ]);
         $order = $orderStmt->fetch();
     }
 }
@@ -48,60 +70,39 @@ if (!$isValid) {
     if ($expectedAmount !== $vnpAmount) {
         $message = 'Số tiền thanh toán không khớp.';
     } else {
-        if ((string) $payment['status'] === 'pending') {
-            $newPaymentStatus = $isCallbackSuccess ? 'paid' : 'failed';
-            $newOrderStatus = $isCallbackSuccess ? 'confirmed' : 'cancelled';
+        if ((string) $payment['payment_status'] === 'pending') {
+            $newPaymentStatus = $isCallbackSuccess ? 'success' : 'failed';
+            $newOrderStatus = $isCallbackSuccess ? 'processing' : 'cancelled';
 
             $pdo->beginTransaction();
+
             try {
                 $lockStmt = $pdo->prepare('SELECT * FROM payments WHERE id = :id LIMIT 1 FOR UPDATE');
-                $lockStmt->execute(['id' => $payment['id']]);
+                $lockStmt->execute([
+                    'id' => $payment['id'],
+                ]);
                 $lockedPayment = $lockStmt->fetch();
 
-                if ($lockedPayment && (string) $lockedPayment['status'] === 'pending') {
+                if ($lockedPayment && (string) $lockedPayment['payment_status'] === 'pending') {
                     $updatePayment = $pdo->prepare(
                         'UPDATE payments
-                         SET status = :status,
-                             response_code = :response_code,
-                             bank_code = :bank_code,
-                             paid_at = :paid_at,
-                             raw_response = :raw_response,
-                             updated_at = NOW()
+                         SET payment_status = :status
                          WHERE id = :id'
                     );
                     $updatePayment->execute([
                         'status' => $newPaymentStatus,
-                        'response_code' => $responseCode,
-                        'bank_code' => $bankCode,
-                        'paid_at' => $payDate,
-                        'raw_response' => json_encode($_GET, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
                         'id' => $lockedPayment['id'],
                     ]);
 
                     $updateOrder = $pdo->prepare(
                         'UPDATE orders
-                         SET payment_status = :payment_status,
-                             status = :status,
+                         SET status = :status,
                              updated_at = NOW()
                          WHERE id = :id'
                     );
                     $updateOrder->execute([
-                        'payment_status' => $newPaymentStatus,
                         'status' => $newOrderStatus,
                         'id' => $lockedPayment['order_id'],
-                    ]);
-
-                    $insertLog = $pdo->prepare(
-                        'INSERT INTO order_logs (order_id, old_status, new_status, note, changed_by, changed_by_name)
-                         VALUES (:order_id, :old_status, :new_status, :note, :changed_by, :changed_by_name)'
-                    );
-                    $insertLog->execute([
-                        'order_id' => $lockedPayment['order_id'],
-                        'old_status' => 'pending',
-                        'new_status' => $newOrderStatus,
-                        'note' => 'VNPAY return fallback. TransactionNo=' . $transactionNo . ', ResponseCode=' . $responseCode,
-                        'changed_by' => 0,
-                        'changed_by_name' => 'VNPAY_RETURN',
                     ]);
                 }
 
@@ -110,28 +111,29 @@ if (!$isValid) {
                 if ($pdo->inTransaction()) {
                     $pdo->rollBack();
                 }
+
                 $message = 'Có lỗi khi cập nhật kết quả thanh toán: ' . $exception->getMessage();
             }
 
-            $stmt = $pdo->prepare('SELECT * FROM payments WHERE transaction_code = :transaction_code LIMIT 1');
-            $stmt->execute(['transaction_code' => $txnRef]);
+            $stmt = $pdo->prepare('SELECT * FROM payments WHERE transaction_id = :transaction_code LIMIT 1');
+            $stmt->execute([
+                'transaction_code' => $txnRef,
+            ]);
             $payment = $stmt->fetch();
 
             if ($payment) {
                 $orderStmt = $pdo->prepare('SELECT * FROM orders WHERE id = :id LIMIT 1');
-                $orderStmt->execute(['id' => $payment['order_id']]);
+                $orderStmt->execute([
+                    'id' => $payment['order_id'],
+                ]);
                 $order = $orderStmt->fetch();
             }
         }
 
-        $success = $payment && (string) $payment['status'] === 'paid';
+        $success = $payment && ((string) $payment['payment_status'] === 'success' || (string) $payment['payment_status'] === 'paid');
         $message = $success
             ? 'Thanh toán VNPAY thành công.'
             : 'Thanh toán VNPAY thất bại hoặc bị hủy.';
-
-        if ($success) {
-            unset($_SESSION['cart']);
-        }
     }
 }
 
@@ -148,13 +150,13 @@ require_once dirname(__DIR__) . '/layouts/header.php';
         <li><strong>Mã giao dịch VNPAY:</strong> <?= e($transactionNo) ?></li>
         <li><strong>Ngân hàng:</strong> <?= e($bankCode) ?></li>
         <li><strong>Thời gian:</strong> <?= e($payDate) ?></li>
-        <li><strong>Trạng thái payment:</strong> <?= e($payment['status'] ?? 'unknown') ?></li>
+        <li><strong>Trạng thái payment:</strong> <?= e($payment['payment_status'] ?? 'unknown') ?></li>
         <li><strong>Trạng thái order:</strong> <?= e($order['status'] ?? 'unknown') ?></li>
     </ul>
 
     <div class="actions" style="margin-top: 14px;">
-        <a class="btn" href="<?= e(buildBasePath('admin/orders/index.php')) ?>">Vào quản lý đơn hàng</a>
-        <a class="btn btn-secondary" href="<?= e(buildBasePath('admin/payments/index.php')) ?>">Vào quản lý thanh toán</a>
+        <a class="p-2 bg-blue-500 text-white rounded" href="<?= e(buildBasePath('../admin.php?controller=order')) ?>">Vào quản lý đơn hàng</a>
+        <a class="p-2 bg-gray-500 text-white rounded" href="<?= e(buildBasePath('../admin.php?controller=payment')) ?>">Vào quản lý thanh toán</a>
     </div>
 </div>
 
