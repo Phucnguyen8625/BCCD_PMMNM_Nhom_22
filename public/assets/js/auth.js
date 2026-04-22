@@ -1,10 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Tự động đặt autocomplete cho fields mật khẩu
-    const passwordFields = document.querySelectorAll('input[type="password"]');
-    passwordFields.forEach(function (field) {
-        field.setAttribute('autocomplete', 'current-password');
-    });
-
     // Toggle hiện/ẩn mật khẩu
     document.querySelectorAll('.toggle-password').forEach(function(btn) {
         btn.addEventListener('click', function() {

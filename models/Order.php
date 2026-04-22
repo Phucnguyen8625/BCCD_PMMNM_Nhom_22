@@ -2,8 +2,7 @@
 class Order {
     private $conn;
 
-    public function __construct() {
-        $db = new \PDO("mysql:host=localhost;dbname=ban_truyen_tranh;charset=utf8", "root", "");
+    public function __construct($db) {
         $this->conn = $db;
     }
 

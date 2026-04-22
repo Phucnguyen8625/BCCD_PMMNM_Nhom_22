@@ -8,10 +8,13 @@ require_once __DIR__ . '/../config/database.php';
 class CheckoutController {
     private $order;
     private $payment;
+    private $db;
 
     public function __construct() {
-        $this->order = new Order();
-        $this->payment = new Payment();
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->order = new Order($this->db);
+        $this->payment = new Payment($this->db);
     }
 
     public function index() {

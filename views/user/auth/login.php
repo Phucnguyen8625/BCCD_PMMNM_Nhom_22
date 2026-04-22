@@ -37,7 +37,7 @@
 
         <!-- RIGHT PANEL -->
         <div class="auth-box__right">
-            <form method="POST" action="index.php?controller=auth&action=processLogin" class="auth-form">
+            <form method="POST" action="index.php?controller=auth&action=processLogin" class="auth-form" autocomplete="off">
                 <h2>Đăng nhập</h2>
                 <p class="subtitle">Nhập thông tin tài khoản của bạn bên dưới.</p>
 
@@ -51,6 +51,9 @@
                     <label for="login_value">Email hoặc Tên đăng nhập</label>
                     <input type="text" id="login_value" name="login_value" required
                            placeholder="Nhập email hoặc username..."
+                           autocomplete="off"
+                           readonly
+                           onfocus="this.removeAttribute('readonly');"
                            value="<?php echo htmlspecialchars($_POST['login_value'] ?? ''); ?>">
                 </div>
 
@@ -58,7 +61,10 @@
                     <label for="password">Mật khẩu</label>
                     <div style="position:relative;">
                         <input type="password" id="password" name="password" required
-                               placeholder="Nhập mật khẩu..." style="padding-right: 48px;">
+                               placeholder="Nhập mật khẩu..." style="padding-right: 48px;"
+                               autocomplete="new-password"
+                               readonly
+                               onfocus="this.removeAttribute('readonly');">
                         <button type="button" class="toggle-password"
                                 style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#6b7280;display:flex;align-items:center;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">

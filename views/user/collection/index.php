@@ -69,6 +69,7 @@
                             </div>
                             
                             <div class="flex-grow flex flex-col justify-between p-1">
+                                <div class="text-[10px] text-secondary uppercase tracking-tighter mb-1 font-bold truncate"><?php echo htmlspecialchars($comic['category_name'] ?? ''); ?></div>
                                 <h3 class="text-sm font-semibold text-gray-800 line-clamp-2 hover:text-primary transition leading-snug h-10 mb-2 truncate-2-lines overflow-hidden" title="<?php echo htmlspecialchars($comic['name']); ?>">
                                     <?php echo htmlspecialchars($comic['name']); ?>
                                 </h3>

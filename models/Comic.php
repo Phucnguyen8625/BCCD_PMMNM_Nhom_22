@@ -4,8 +4,8 @@ class Comic {
     private $table_name = "comics";
 
     public $id;
-    public $category_id;
-    public $category_name; // To store joined data
+    public $category_ids = [];
+    public $category_name; // To store joined data (comma separated)
     public $name;
     public $author;
     public $price;
@@ -22,11 +22,13 @@ class Comic {
         $this->conn = $db;
     }
 
-    // Lấy toàn bộ truyện kèm theo tên danh mục
+    // Lấy toàn bộ truyện kèm theo tên danh mục (nhiều danh mục)
     public function readAll() {
-        $query = "SELECT c.*, cat.name as category_name 
+        $query = "SELECT c.*, GROUP_CONCAT(cat.name SEPARATOR ', ') as category_name 
                   FROM " . $this->table_name . " c 
-                  LEFT JOIN categories cat ON c.category_id = cat.id 
+                  LEFT JOIN comic_categories cc ON c.id = cc.comic_id
+                  LEFT JOIN categories cat ON cc.category_id = cat.id 
+                  GROUP BY c.id
                   ORDER BY c.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
@@ -42,7 +44,6 @@ class Comic {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if($row) {
-            $this->category_id = $row['category_id'];
             $this->name = $row['name'];
             $this->author = $row['author'];
             $this->price = $row['price'];
@@ -53,6 +54,13 @@ class Comic {
             $this->is_combo = $row['is_combo'];
             $this->is_bestseller = $row['is_bestseller'];
             $this->is_preorder = $row['is_preorder'];
+
+            // Lấy danh sách ID thể loại
+            $query_cat = "SELECT category_id FROM comic_categories WHERE comic_id = ?";
+            $stmt_cat = $this->conn->prepare($query_cat);
+            $stmt_cat->execute([$this->id]);
+            $this->category_ids = $stmt_cat->fetchAll(PDO::FETCH_COLUMN);
+
             return true;
         }
         return false;
@@ -61,13 +69,12 @@ class Comic {
     // Thêm truyện mới
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET category_id=:category_id, name=:name, author=:author, 
+                  SET name=:name, author=:author, 
                       price=:price, quantity=:quantity, image_url=:image_url, description=:description,
                       is_sale=:is_sale, is_combo=:is_combo, is_bestseller=:is_bestseller, is_preorder=:is_preorder";
         $stmt = $this->conn->prepare($query);
 
         // Sanitize
-        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
         $this->name = htmlspecialchars(strip_tags($this->name));
         $this->author = htmlspecialchars(strip_tags($this->author));
         $this->price = htmlspecialchars(strip_tags($this->price));
@@ -76,7 +83,6 @@ class Comic {
         $this->description = htmlspecialchars(strip_tags($this->description));
 
         // Bind
-        $stmt->bindParam(":category_id", $this->category_id);
         $stmt->bindParam(":name", $this->name);
         $stmt->bindParam(":author", $this->author);
         $stmt->bindParam(":price", $this->price);
@@ -89,6 +95,14 @@ class Comic {
         $stmt->bindParam(":is_preorder", $this->is_preorder);
 
         if($stmt->execute()) {
+            $this->id = $this->conn->lastInsertId();
+            // Lưu thể loại
+            if(!empty($this->category_ids)) {
+                foreach($this->category_ids as $cat_id) {
+                    $q = "INSERT INTO comic_categories (comic_id, category_id) VALUES (?, ?)";
+                    $this->conn->prepare($q)->execute([$this->id, $cat_id]);
+                }
+            }
             return true;
         }
         return false;
@@ -97,14 +111,13 @@ class Comic {
     // Cập nhật truyện
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
-                  SET category_id=:category_id, name=:name, author=:author, 
+                  SET name=:name, author=:author, 
                       price=:price, quantity=:quantity, image_url=:image_url, description=:description,
                       is_sale=:is_sale, is_combo=:is_combo, is_bestseller=:is_bestseller, is_preorder=:is_preorder
                   WHERE id=:id";
         $stmt = $this->conn->prepare($query);
 
         // Sanitize
-        $this->category_id = htmlspecialchars(strip_tags($this->category_id));
         $this->name = htmlspecialchars(strip_tags($this->name));
         $this->author = htmlspecialchars(strip_tags($this->author));
         $this->price = htmlspecialchars(strip_tags($this->price));
@@ -114,7 +127,6 @@ class Comic {
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         // Bind
-        $stmt->bindParam(":category_id", $this->category_id);
         $stmt->bindParam(":name", $this->name);
         $stmt->bindParam(":author", $this->author);
         $stmt->bindParam(":price", $this->price);
@@ -128,6 +140,18 @@ class Comic {
         $stmt->bindParam(":id", $this->id);
 
         if($stmt->execute()) {
+            // Cập nhật thể loại
+            // 1. Xóa cũ
+            $q_del = "DELETE FROM comic_categories WHERE comic_id = ?";
+            $this->conn->prepare($q_del)->execute([$this->id]);
+            
+            // 2. Thêm mới
+            if(!empty($this->category_ids)) {
+                foreach($this->category_ids as $cat_id) {
+                    $q_ins = "INSERT INTO comic_categories (comic_id, category_id) VALUES (?, ?)";
+                    $this->conn->prepare($q_ins)->execute([$this->id, $cat_id]);
+                }
+            }
             return true;
         }
         return false;
@@ -149,10 +173,12 @@ class Comic {
     // Tìm kiếm truyện theo từ khóa (tên hoặc tác giả)
     public function search($keyword) {
         $keyword = '%' . $keyword . '%';
-        $query = "SELECT c.*, cat.name as category_name
+        $query = "SELECT c.*, GROUP_CONCAT(cat.name SEPARATOR ', ') as category_name
                   FROM " . $this->table_name . " c
-                  LEFT JOIN categories cat ON c.category_id = cat.id
+                  LEFT JOIN comic_categories cc ON c.id = cc.comic_id
+                  LEFT JOIN categories cat ON cc.category_id = cat.id
                   WHERE c.name LIKE :kw OR c.author LIKE :kw OR c.description LIKE :kw
+                  GROUP BY c.id
                   ORDER BY c.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':kw', $keyword);
@@ -164,8 +190,9 @@ class Comic {
     public function readByCategory($category_id) {
         $query = "SELECT c.*, cat.name as category_name
                   FROM " . $this->table_name . " c
-                  LEFT JOIN categories cat ON c.category_id = cat.id
-                  WHERE c.category_id = :cat_id
+                  JOIN comic_categories cc ON c.id = cc.comic_id
+                  JOIN categories cat ON cc.category_id = cat.id
+                  WHERE cc.category_id = :cat_id
                   ORDER BY c.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':cat_id', $category_id, PDO::PARAM_INT);
@@ -178,10 +205,12 @@ class Comic {
         $allowedFlags = ['is_sale', 'is_combo', 'is_bestseller', 'is_preorder'];
         if (!in_array($flagName, $allowedFlags)) return null;
 
-        $query = "SELECT c.*, cat.name as category_name
+        $query = "SELECT c.*, GROUP_CONCAT(cat.name SEPARATOR ', ') as category_name
                   FROM " . $this->table_name . " c
-                  LEFT JOIN categories cat ON c.category_id = cat.id
+                  LEFT JOIN comic_categories cc ON c.id = cc.comic_id
+                  LEFT JOIN categories cat ON cc.category_id = cat.id
                   WHERE c." . $flagName . " = 1
+                  GROUP BY c.id
                   ORDER BY c.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
@@ -190,9 +219,11 @@ class Comic {
 
     // Lấy truyện giá rẻ (giá thấp nhất lên đầu)
     public function readCheap($limit = 5) {
-        $query = "SELECT c.*, cat.name as category_name
+        $query = "SELECT c.*, GROUP_CONCAT(cat.name SEPARATOR ', ') as category_name
                   FROM " . $this->table_name . " c
-                  LEFT JOIN categories cat ON c.category_id = cat.id
+                  LEFT JOIN comic_categories cc ON c.id = cc.comic_id
+                  LEFT JOIN categories cat ON cc.category_id = cat.id
+                  GROUP BY c.id
                   ORDER BY c.price ASC
                   LIMIT :limit";
         $stmt = $this->conn->prepare($query);

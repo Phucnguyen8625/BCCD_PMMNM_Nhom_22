@@ -21,7 +21,8 @@ class HomeController {
                 'price' => number_format($row['price'], 0, ',', '.'),
                 'old_price' => number_format($row['price'] * 1.25, 0, ',', '.'), // Mock old price for display
                 'discount' => '-20%',
-                'image' => !empty($row['image_url']) ? $row['image_url'] : 'https://dummyimage.com/200x250/2c5282/ffffff&text=Sale'
+                'image' => !empty($row['image_url']) ? $row['image_url'] : 'https://dummyimage.com/200x250/2c5282/ffffff&text=Sale',
+                'category' => $row['category_name']
             ];
         }
 
@@ -36,7 +37,8 @@ class HomeController {
                 'title' => $row['name'],
                 'price' => number_format($row['price'], 0, ',', '.'),
                 'stock' => $row['quantity'] > 0 ? 'Còn hàng' : 'Hết hàng',
-                'image' => !empty($row['image_url']) ? $row['image_url'] : 'https://dummyimage.com/200x250/2c5282/ffffff&text=New'
+                'image' => !empty($row['image_url']) ? $row['image_url'] : 'https://dummyimage.com/200x250/2c5282/ffffff&text=New',
+                'category' => $row['category_name']
             ];
         }
 
@@ -53,7 +55,8 @@ class HomeController {
                 'title' => $row['name'],
                 'price' => number_format($row['price'], 0, ',', '.') . ' đ',
                 'sold' => rand(100, 5000), // Mock data as we don't track sales yet
-                'image' => !empty($row['image_url']) ? $row['image_url'] : 'https://dummyimage.com/100x130/2c5282/ffffff&text=Top'
+                'image' => !empty($row['image_url']) ? $row['image_url'] : 'https://dummyimage.com/100x130/2c5282/ffffff&text=Top',
+                'category' => $row['category_name']
             ];
         }
 

@@ -13,9 +13,8 @@ class User {
     public $role;
     public $status;
 
-    public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
+    public function __construct($db) {
+        $this->db = $db;
     }
 
     /**

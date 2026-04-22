@@ -1,12 +1,16 @@
 <?php
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/User.php';
 
 class AuthController {
 
     private $userModel;
+    private $db;
 
     public function __construct() {
-        $this->userModel = new User();
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->userModel = new User($this->db);
     }
 
     // Hiển thị trang đăng nhập

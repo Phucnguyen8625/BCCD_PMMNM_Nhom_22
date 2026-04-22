@@ -1,11 +1,15 @@
 <?php
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Order.php';
 
 class AdminOrderController {
     private $order;
+    private $db;
 
     public function __construct() {
-        $this->order = new Order();
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->order = new Order($this->db);
     }
 
     public function index() {

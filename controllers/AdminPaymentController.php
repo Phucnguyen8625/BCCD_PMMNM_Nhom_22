@@ -1,11 +1,15 @@
 <?php
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Payment.php';
 
 class AdminPaymentController {
     private $payment;
+    private $db;
 
     public function __construct() {
-        $this->payment = new Payment();
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->payment = new Payment($this->db);
     }
 
     public function index() {

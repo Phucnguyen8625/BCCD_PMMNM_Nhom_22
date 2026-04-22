@@ -1,11 +1,15 @@
 <?php
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Report.php';
 
 class AdminReportController {
     private $report;
+    private $db;
 
     public function __construct() {
-        $this->report = new Report();
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->report = new Report($this->db);
     }
 
     public function index() {

@@ -28,14 +28,13 @@
 
                 <div>
                     <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Thể loại <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <select name="category_id" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition appearance-none">
-                            <option value="">-- Chọn danh mục --</option>
-                            <?php foreach($categories as $cat): ?>
-                                <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none text-xs"></i>
+                    <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <?php foreach($categories as $cat): ?>
+                            <label class="flex items-center space-x-2 p-2 rounded-lg hover:bg-white cursor-pointer transition border border-transparent hover:border-slate-100">
+                                <input type="checkbox" name="category_ids[]" value="<?php echo $cat['id']; ?>" class="w-4 h-4 text-accent border-slate-300 rounded focus:ring-accent">
+                                <span class="text-xs font-bold text-slate-600 uppercase tracking-tighter"><?php echo htmlspecialchars($cat['name']); ?></span>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
                 </div>
 

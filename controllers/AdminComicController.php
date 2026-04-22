@@ -29,7 +29,7 @@ class AdminComicController {
 
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->comic->category_id = $_POST['category_id'];
+            $this->comic->category_ids = isset($_POST['category_ids']) ? $_POST['category_ids'] : [];
             $this->comic->name = trim($_POST['name']);
             $this->comic->author = trim($_POST['author']);
             $this->comic->price = floatval($_POST['price']);
@@ -95,7 +95,7 @@ class AdminComicController {
             $this->comic->readOne(); // to get old image first
             $old_image = $this->comic->image_url;
 
-            $this->comic->category_id = $_POST['category_id'];
+            $this->comic->category_ids = isset($_POST['category_ids']) ? $_POST['category_ids'] : [];
             $this->comic->name = trim($_POST['name']);
             $this->comic->author = trim($_POST['author']);
             $this->comic->price = floatval($_POST['price']);

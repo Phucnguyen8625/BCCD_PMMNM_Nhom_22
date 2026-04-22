@@ -36,6 +36,7 @@
                         </div>
                     </div>
                     <div class="p-2 flex-grow flex flex-col justify-between">
+                        <div class="text-[10px] text-gray-500 uppercase tracking-tighter mb-1 font-bold truncate"><?php echo htmlspecialchars($comic['category'] ?? ''); ?></div>
                         <div class="text-gray-800 text-sm font-semibold truncate hover:text-blue-600" title="<?php echo htmlspecialchars($comic['title']); ?>"><?php echo htmlspecialchars($comic['title']); ?></div>
                         <div class="mt-2 flex items-baseline space-x-2">
                             <span class="text-price font-bold text-lg"><?php echo $comic['price']; ?>đ</span>
@@ -77,6 +78,7 @@
                             </div>
                         </div>
                         <div class="mt-2 pl-1 h-16 flex flex-col justify-between">
+                            <div class="text-[10px] text-gray-500 uppercase tracking-tighter mb-1 font-bold truncate"><?php echo htmlspecialchars($comic['category'] ?? ''); ?></div>
                             <h3 class="text-sm font-medium text-gray-800 line-clamp-2 hover:text-blue-500 cursor-pointer leading-tight" title="<?php echo htmlspecialchars($comic['title']); ?>">
                                 <?php echo htmlspecialchars($comic['title']); ?>
                             </h3>

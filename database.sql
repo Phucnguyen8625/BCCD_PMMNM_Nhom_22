@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS categories (
 -- 2. Comics
 CREATE TABLE IF NOT EXISTS comics (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    category_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     author VARCHAR(150),
     price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
@@ -27,8 +26,16 @@ CREATE TABLE IF NOT EXISTS comics (
     is_bestseller TINYINT(1) DEFAULT 0,
     is_preorder TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- 2.1 Comic Categories (Many-to-Many)
+CREATE TABLE IF NOT EXISTS comic_categories (
+    comic_id INT NOT NULL,
+    category_id INT NOT NULL,
+    PRIMARY KEY (comic_id, category_id),
+    FOREIGN KEY (comic_id) REFERENCES comics(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- 3. Users

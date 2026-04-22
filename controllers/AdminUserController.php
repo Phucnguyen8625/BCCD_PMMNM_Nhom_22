@@ -1,11 +1,15 @@
 <?php
+require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/User.php';
 
 class AdminUserController {
     private $userModel;
+    private $db;
 
     public function __construct() {
-        $this->userModel = new User();
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->userModel = new User($this->db);
     }
 
     // Hiển thị danh sách khách hàng & nhân viên
