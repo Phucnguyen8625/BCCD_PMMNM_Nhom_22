@@ -2,12 +2,15 @@
 // Global Configuration File
 
 // 1. Detection of BASE_URL
-$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'];
-$uri = $_SERVER['REQUEST_URI'];
-$baseDir = explode('/', trim($uri, '/'))[0]; 
+$scriptName = $_SERVER['SCRIPT_NAME'];
+$baseDir = str_replace('\\', '/', dirname($scriptName));
+if ($baseDir === DIRECTORY_SEPARATOR || $baseDir === '/') {
+    $baseDir = '';
+}
 
-define('BASE_URL', $protocol . '://' . $host . '/' . $baseDir);
+define('BASE_URL', $protocol . '://' . $host . $baseDir);
 
 // 2. VNPay Configuration (Sandbox)
 define('VNPAY_TMN_CODE', 'BSL0YV7Z'); 

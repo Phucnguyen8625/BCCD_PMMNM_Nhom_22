@@ -1,10 +1,27 @@
 <?php
 class Database {
-    private $host = "localhost";
-    private $db_name = "ban_truyen_tranh";
-    private $username = "root";
-    private $password = "123456";
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
     public $conn;
+
+    public function __construct() {
+        // Tự động nhận diện môi trường
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '127.0.0.1' || strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) {
+            // Cấu hình cho máy cá nhân (XAMPP)
+            $this->host = "localhost";
+            $this->db_name = "ban_truyen_tranh";
+            $this->username = "root";
+            $this->password = "123456";
+        } else {
+            // Cấu hình cho Hosting InfinityFree
+            $this->host = "sql210.infinityfree.com"; 
+            $this->db_name = "if0_41731555_ban_truyen_tranh";
+            $this->username = "if0_41731555";
+            $this->password = "gcQwCfcz8625";
+        }
+    }
 
     public function getConnection() {
         $this->conn = null;

@@ -40,17 +40,86 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="w-full md:w-2/4 px-4 flex justify-center">
-            <form action="index.php" method="GET" class="relative w-full max-w-md flex">
+        <div class="w-full md:w-2/4 px-4 flex justify-center relative">
+            <form action="index.php" method="GET" class="relative w-full max-w-md flex z-50">
                 <input type="hidden" name="controller" value="search">
-                <input type="text" name="q" value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>"
+                <input type="text" name="q" id="searchInput" autocomplete="off" value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>"
                        class="w-full h-10 pl-4 pr-10 rounded-l-sm focus:outline-none text-sm border-0"
                        placeholder="Tìm kiếm tựa truyện, tác giả...">
                 <button type="submit" class="h-10 px-3 bg-secondary text-white rounded-r-sm hover:bg-orange-500 transition">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
+
+            <!-- Khung Dropdown Live Search -->
+            <div id="searchDropdown" class="absolute left-0 right-0 mx-4 md:mx-auto top-full mt-1 w-[calc(100%-2rem)] max-w-md bg-white rounded-sm shadow-xl border border-gray-200 hidden max-h-80 overflow-y-auto z-[60]">
+                <ul id="searchResults" class="divide-y divide-gray-100">
+                    <!-- Dữ liệu render bằng JS -->
+                </ul>
+            </div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const searchInput = document.getElementById('searchInput');
+                const searchDropdown = document.getElementById('searchDropdown');
+                const searchResults = document.getElementById('searchResults');
+                let timeoutId;
+
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(timeoutId);
+                    const query = this.value.trim();
+
+                    if (query.length < 2) {
+                        searchDropdown.classList.add('hidden');
+                        return;
+                    }
+
+                    // Debounce 300ms
+                    timeoutId = setTimeout(() => {
+                        fetch('index.php?controller=search&action=ajax&q=' + encodeURIComponent(query))
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success' && data.data.length > 0) {
+                                    searchResults.innerHTML = '';
+                                    data.data.forEach(comic => {
+                                        const li = document.createElement('li');
+                                        li.innerHTML = `
+                                            <a href="index.php?controller=comic&action=show&id=${comic.id}" class="flex items-center p-2 hover:bg-gray-50 transition">
+                                                <img src="${comic.image}" class="w-10 h-14 object-cover rounded-sm border border-gray-200 flex-shrink-0" alt="Cover">
+                                                <div class="ml-3 overflow-hidden">
+                                                    <h4 class="text-sm font-semibold text-gray-800 truncate">${comic.title}</h4>
+                                                    <p class="text-xs text-price font-bold mt-1">${comic.price}</p>
+                                                </div>
+                                            </a>
+                                        `;
+                                        searchResults.appendChild(li);
+                                    });
+                                    searchDropdown.classList.remove('hidden');
+                                } else {
+                                    searchResults.innerHTML = '<li class="p-4 text-center text-sm text-gray-500">Không tìm thấy truyện nào.</li>';
+                                    searchDropdown.classList.remove('hidden');
+                                }
+                            })
+                            .catch(err => console.error(err));
+                    }, 300);
+                });
+
+                // Click outside to close
+                document.addEventListener('click', function(e) {
+                    if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                        searchDropdown.classList.add('hidden');
+                    }
+                });
+                
+                // Show dropdown again when focus if it has value
+                searchInput.addEventListener('focus', function() {
+                    if (this.value.trim().length >= 2 && searchResults.innerHTML !== '') {
+                        searchDropdown.classList.remove('hidden');
+                    }
+                });
+            });
+        </script>
 
         <!-- Right: Cart + User -->
         <div class="w-full md:w-1/4 flex items-center justify-center md:justify-end text-yellow-300 text-sm mt-2 md:mt-0 space-x-6">

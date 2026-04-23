@@ -26,13 +26,31 @@ function appConfig(array $config, string $key, string $default = ''): string
         : $default;
 }
 
-define('APP_NAME', appConfig($localConfig, 'APP_NAME', 'Comic Store - Module Nguyễn Huy Phúc'));
-define('BASE_URL', appConfig($localConfig, 'BASE_URL', 'http://localhost/BCCD_Lap_trinh_web_nang_cao_Nhom_2/phuc_modules'));
+// Tự động nhận diện BASE_URL cho module
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'];
+$scriptName = $_SERVER['SCRIPT_NAME'];
+$baseDir = str_replace('\\', '/', dirname($scriptName));
+if ($baseDir === DIRECTORY_SEPARATOR || $baseDir === '/') {
+    $baseDir = '';
+}
+$dynamicBaseUrl = $protocol . '://' . $host . $baseDir;
 
-define('DB_HOST', appConfig($localConfig, 'DB_HOST', '127.0.0.1'));
-define('DB_NAME', appConfig($localConfig, 'DB_NAME', 'ban_truyen_tranh'));
-define('DB_USER', appConfig($localConfig, 'DB_USER', 'root'));
-define('DB_PASS', appConfig($localConfig, 'DB_PASS', ''));
+define('APP_NAME', appConfig($localConfig, 'APP_NAME', 'Comic Store - Module Nguyễn Huy Phúc'));
+define('BASE_URL', appConfig($localConfig, 'BASE_URL', $dynamicBaseUrl));
+
+// Tự động nhận diện môi trường DB
+if ($host == 'localhost' || $host == '127.0.0.1') {
+    define('DB_HOST', appConfig($localConfig, 'DB_HOST', 'localhost'));
+    define('DB_NAME', appConfig($localConfig, 'DB_NAME', 'ban_truyen_tranh'));
+    define('DB_USER', appConfig($localConfig, 'DB_USER', 'root'));
+    define('DB_PASS', appConfig($localConfig, 'DB_PASS', '123456'));
+} else {
+    define('DB_HOST', appConfig($localConfig, 'DB_HOST', 'sql210.infinityfree.com'));
+    define('DB_NAME', appConfig($localConfig, 'DB_NAME', 'if0_41731555_ban_truyen_tranh'));
+    define('DB_USER', appConfig($localConfig, 'DB_USER', 'if0_41731555'));
+    define('DB_PASS', appConfig($localConfig, 'DB_PASS', 'gcQwCfcz8625'));
+}
 define('DB_CHARSET', appConfig($localConfig, 'DB_CHARSET', 'utf8mb4'));
 
 define('VNPAY_TMN_CODE', appConfig($localConfig, 'VNPAY_TMN_CODE', 'BSL0YV7*'));
