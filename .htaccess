@@ -1,0 +1,4 @@
+RewriteEngine On
+# Tự động chuyển hướng từ tên miền cũ sang tên miền mới pkbcomic.io.vn
+RewriteCond %{HTTP_HOST} ^(www\.)?pkbcomicstore\.great-site\.net$ [NC]
+RewriteRule ^(.*)$ http://pkbcomic.io.vn/$1 [L,R=301]
