@@ -9,7 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
+        // Dark mode check before render
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -25,23 +34,35 @@
         }
     </script>
     <style>
-        body { background-color: #ededed; }
+        body { background-color: #ededed; transition: background-color 0.3s, color 0.3s; }
+        .dark body { background-color: #1a202c; color: #cbd5e0; }
+        .dark nav { background-color: #2d3748 !important; border-color: #4a5568 !important; }
+        .dark .bg-white, .dark .bg-gray-50 { background-color: #2d3748 !important; color: #cbd5e0 !important; border-color: #4a5568 !important; }
+        .dark .text-navlink { color: #cbd5e0 !important; }
+        .dark .text-primary { color: #d6bcfa !important; }
+        .dark .text-blue-500 { color: #60a5fa !important; }
+        .dark .text-gray-900, .dark .text-gray-800, .dark .text-gray-700, .dark .text-gray-600 { color: #e2e8f0 !important; }
+        .dark .text-gray-500 { color: #a0aec0 !important; }
+        .dark .border-gray-50, .dark .border-gray-100, .dark .border-gray-200 { border-color: #4a5568 !important; }
+        .dark .hover\:bg-purple-50:hover, .dark .hover\:bg-gray-50:hover { background-color: #4a5568 !important; color: #ffffff !important; }
+        .dark .comic-card { background-color: #2d3748 !important; border-color: #4a5568 !important; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .comic-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+        .dark .comic-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
     </style>
 </head>
-<body class="font-sans text-gray-800">
+<body class="font-sans text-gray-800 transition-colors duration-300">
 
 <!-- Top Header -->
 <header class="bg-primary pt-3 pb-3 px-4 relative" style="background-image:url('https://st.nettruyen.work/Data/Sites/1/media/bn-bg.jpg');background-size:cover;background-position:center;">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between">
         <!-- Logo -->
-        <div class="w-full md:w-1/4 mb-2 md:mb-0 flex items-center h-12">
+        <div class="w-full md:w-auto mb-2 md:mb-0 flex items-center h-12">
             <a href="index.php" class="text-3xl font-bold text-white tracking-widest" style="font-family:'Verdana',sans-serif;text-shadow:2px 2px 0px #f7941d;">MangaStore</a>
         </div>
 
         <!-- Search Bar -->
-        <div class="w-full md:w-2/4 px-4 flex justify-center relative">
-            <form action="index.php" method="GET" class="relative w-full max-w-md flex z-50">
+        <div class="w-full md:flex-1 md:px-8 flex justify-center relative">
+            <form action="index.php" method="GET" class="relative w-full max-w-lg flex z-50">
                 <input type="hidden" name="controller" value="search">
                 <input type="text" name="q" id="searchInput" autocomplete="off" value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>"
                        class="w-full h-10 pl-4 pr-10 rounded-l-sm focus:outline-none text-sm border-0"
@@ -52,7 +73,7 @@
             </form>
 
             <!-- Khung Dropdown Live Search -->
-            <div id="searchDropdown" class="absolute left-0 right-0 mx-4 md:mx-auto top-full mt-1 w-[calc(100%-2rem)] max-w-md bg-white rounded-sm shadow-xl border border-gray-200 hidden max-h-80 overflow-y-auto z-[60]">
+            <div id="searchDropdown" class="absolute left-0 right-0 mx-4 md:mx-8 top-full mt-1 max-w-lg bg-white rounded-sm shadow-xl border border-gray-200 hidden max-h-80 overflow-y-auto z-[60]">
                 <ul id="searchResults" class="divide-y divide-gray-100">
                     <!-- Dữ liệu render bằng JS -->
                 </ul>
@@ -122,17 +143,28 @@
         </script>
 
         <!-- Right: Cart + User -->
-        <div class="w-full md:w-1/4 flex items-center justify-center md:justify-end text-yellow-300 text-sm mt-2 md:mt-0 space-x-6">
-            <a href="index.php?controller=cart" class="relative hover:text-white transition flex items-center space-x-1">
+        <div class="w-full md:w-auto flex flex-nowrap items-center justify-center md:justify-end text-yellow-300 text-sm mt-2 md:mt-0 space-x-3 md:space-x-4">
+            <a href="index.php?controller=cart" class="relative hover:text-white transition flex items-center space-x-1 whitespace-nowrap">
                 <i class="fas fa-shopping-cart text-lg"></i>
-                <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                <span class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                     <?php echo isset($_SESSION['cart']) ? array_sum($_SESSION['cart']) : '0'; ?>
                 </span>
                 <span class="ml-2 hidden lg:inline">Giỏ hàng</span>
             </a>
 
+            <!-- Dark Mode Toggle Button -->
+            <button id="themeToggle" class="text-white hover:text-yellow-300 transition focus:outline-none" title="Chuyển chế độ sáng/tối">
+                <i class="fas fa-moon text-lg" id="themeIcon"></i>
+            </button>
+
             <?php if (isset($_SESSION['user_id'])): ?>
-                <div class="relative group cursor-pointer">
+                <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+                    <a href="admin.php" class="bg-purple-600 border border-purple-500 text-white font-semibold px-2 py-1.5 rounded-md hover:bg-purple-700 hover:border-purple-600 transition shadow-sm text-xs hidden md:inline-flex items-center space-x-1 whitespace-nowrap">
+                        <i class="fas fa-cogs"></i>
+                        <span class="hidden lg:inline">Quản lý</span>
+                    </a>
+                <?php endif; ?>
+                <div class="relative group cursor-pointer whitespace-nowrap">
                     <div class="flex items-center space-x-1 text-white hover:text-yellow-300 transition">
                         <i class="fas fa-user-circle text-lg"></i>
                         <span class="hidden lg:inline font-medium"><?php echo htmlspecialchars($_SESSION['user_login']['full_name'] ?? 'Tài khoản'); ?></span>
@@ -156,12 +188,12 @@
                     </div>
                 </div>
             <?php else: ?>
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 md:space-x-3 whitespace-nowrap">
                     <a href="index.php?controller=auth&action=login" class="text-white hover:text-yellow-300 transition flex items-center space-x-1">
                         <i class="fas fa-sign-in-alt"></i>
                         <span class="hidden lg:inline">Đăng nhập</span>
                     </a>
-                    <a href="index.php?controller=auth&action=register" class="bg-secondary text-white font-semibold px-3 py-1.5 rounded-lg hover:bg-orange-500 transition text-xs hidden lg:inline-block">
+                    <a href="index.php?controller=auth&action=register" class="bg-secondary text-white font-semibold px-2 py-1.5 rounded-lg hover:bg-orange-500 transition text-xs">
                         Đăng ký
                     </a>
                 </div>
@@ -205,3 +237,33 @@
         </ul>
     </div>
 </nav>
+
+<script>
+    // Dark mode toggle logic
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    function updateIcon() {
+        if (document.documentElement.classList.contains('dark')) {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        }
+    }
+    
+    updateIcon(); // Initial icon update
+    
+    themeToggleBtn.addEventListener('click', function() {
+        document.documentElement.classList.toggle('dark');
+        
+        if (document.documentElement.classList.contains('dark')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+        
+        updateIcon();
+    });
+</script>

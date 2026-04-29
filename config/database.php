@@ -32,7 +32,7 @@ class Database {
             // Set error mode
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $exception) {
-            echo "Lỗi kết nối CSDL: " . $exception->getMessage();
+            die("<h1>Lỗi kết nối Cơ sở dữ liệu!</h1><p>Chi tiết lỗi: " . $exception->getMessage() . "</p><p>Vui lòng kiểm tra lại thông tin cấu hình trong file <b>config/database.php</b></p>");
         }
 
         return $this->conn;

@@ -1,0 +1,348 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Times New Roman", Times, serif;
+    background: #f4f6fb;
+    color: #1f2937;
+}
+
+a {
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+.list-page {
+    width: 100%;
+    padding-bottom: 40px;
+}
+
+.list-hero {
+    padding: 24px;
+}
+
+.list-hero__inner {
+    min-height: 280px;
+    border-radius: 28px;
+    padding: 42px;
+    background:
+        linear-gradient(rgba(14, 19, 35, 0.58), rgba(14, 19, 35, 0.78)),
+        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.list-hero__badge {
+    display: inline-block;
+    width: fit-content;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.16);
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.list-hero__inner h1 {
+    margin: 0 0 16px;
+    font-size: 46px;
+}
+
+.list-hero__inner p {
+    max-width: 700px;
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.92);
+}
+
+.list-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 24px;
+    padding: 0 24px;
+}
+
+.filter-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.filter-card {
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.filter-card h3 {
+    margin: 0 0 16px;
+    font-size: 22px;
+    color: #111827;
+}
+
+.filter-item {
+    width: 100%;
+    min-height: 46px;
+    border: none;
+    border-radius: 14px;
+    background: #eef2ff;
+    color: #1f2937;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    cursor: pointer;
+    text-align: left;
+    padding: 0 16px;
+}
+
+.filter-item:last-child {
+    margin-bottom: 0;
+}
+
+.filter-item.active {
+    background: #111827;
+    color: #ffffff;
+}
+
+.section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.section-heading__label {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 34px;
+    color: #111827;
+}
+
+.section-heading__link {
+    color: #111827;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.story-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.story-row {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 20px;
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.story-row__thumb {
+    position: relative;
+    min-height: 260px;
+}
+
+.story-row__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.story-row__tag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(17, 24, 39, 0.85);
+    color: #ffffff;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 999px;
+}
+
+.story-row__body {
+    padding: 22px 22px 22px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.story-row__body h3 {
+    margin: 0 0 10px;
+    font-size: 28px;
+    line-height: 1.35;
+}
+
+.story-row__body h3 a {
+    color: #111827;
+}
+
+.story-row__genre {
+    margin: 0 0 14px;
+    color: #2563eb;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.story-row__desc {
+    margin: 0 0 18px;
+    color: #6b7280;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.story-row__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.story-btn {
+    min-height: 46px;
+    padding: 0 18px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2ff;
+    color: #1f2937;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.story-btn--primary {
+    background: #111827;
+    color: #ffffff;
+}
+
+body.theme-dark {
+    background: #111827;
+    color: #f3f4f6;
+}
+
+body.theme-dark .filter-card,
+body.theme-dark .story-row {
+    background: #1f2937;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+body.theme-dark .filter-card h3,
+body.theme-dark .section-heading h2,
+body.theme-dark .section-heading__link,
+body.theme-dark .story-row__body h3 a {
+    color: #f9fafb;
+}
+
+body.theme-dark .story-row__desc {
+    color: #d1d5db;
+}
+
+body.theme-dark .filter-item {
+    background: #243042;
+    color: #f3f4f6;
+}
+
+body.theme-dark .filter-item.active,
+body.theme-dark .story-btn--primary {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+body.theme-comic {
+    background: #fff4a8;
+    color: #3b2f0b;
+}
+
+body.theme-comic .filter-card,
+body.theme-comic .story-row {
+    background: #fff8d6;
+}
+
+body.theme-comic .filter-card h3,
+body.theme-comic .section-heading h2,
+body.theme-comic .section-heading__link,
+body.theme-comic .story-row__body h3 a {
+    color: #3b2f0b;
+}
+
+@media (max-width: 1100px) {
+    .list-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-panel {
+        order: 2;
+    }
+
+    .list-content {
+        order: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .story-row {
+        grid-template-columns: 1fr;
+    }
+
+    .story-row__thumb {
+        min-height: 280px;
+    }
+
+    .story-row__body {
+        padding: 20px;
+    }
+
+    .list-hero__inner {
+        padding: 28px;
+    }
+
+    .list-hero__inner h1 {
+        font-size: 34px;
+    }
+
+    .list-hero__inner p {
+        font-size: 17px;
+    }
+}
+
+@media (max-width: 600px) {
+    .list-hero,
+    .list-layout {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .section-heading h2 {
+        font-size: 26px;
+    }
+
+    .story-row__body h3 {
+        font-size: 24px;
+    }
+
+    .story-row__actions {
+        flex-direction: column;
+    }
+}

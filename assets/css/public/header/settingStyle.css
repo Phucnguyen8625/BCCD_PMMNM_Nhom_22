@@ -1,0 +1,127 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ================= ROOT VARIABLES ================= */
+:root {
+    /* Theme system from HEAD */
+    --bg: #f4f6fb;
+    --sidebar: #eef2ff;
+    --panel: #ffffff;
+    --panel-soft: #edf2ff;
+    --panel-light: #e2e8f0;
+    --panel-pink: #f8fafc;
+    --text: #1f2937;
+    --muted: #475569;
+    --accent: #2563eb;
+    --accent-dark: #1d4ed8;
+    --blue: #2563eb;
+    --blue-soft: #dbeafe;
+    --blue-border: #3b82f6;
+    --dark: #0f172a;
+    --line: #93c5fd;
+    --yellow: #f59e0b;
+    --yellow-soft: #fef3c7;
+    --stone: #94a3b8;
+    --danger: #ef4444;
+
+    /* Compatibility variables from feature/public-login */
+    --mau-nen: var(--bg);
+    --mau-nen-phu: var(--panel-soft);
+    --mau-nen-the: var(--panel);
+    --mau-nen-the-2: var(--panel-light);
+    --mau-nen-the-3: var(--panel-pink);
+    --mau-vien: #e09c96;
+    --mau-chu: var(--text);
+    --mau-chu-phu: var(--muted);
+    --mau-cam: var(--accent);
+    --mau-cam-dam: var(--accent-dark);
+    --mau-xanh: var(--blue);
+    --mau-do-dam: var(--dark);
+    --mau-trang: #ffffff;
+    --mau-do-xoa: var(--danger);
+}
+
+/* ================= THEMES ================= */
+body.theme-light {
+    background: var(--bg);
+    color: var(--text);
+}
+
+body.theme-dark {
+    --bg: #141212;
+    --sidebar: #191616;
+    --panel: #211d1d;
+    --panel-soft: #171313;
+    --panel-light: #2a2424;
+    --panel-pink: #362d2d;
+    --text: #f3e7e5;
+    --muted: #c3a7a2;
+    --accent: #ff7a45;
+    --accent-dark: #ff6a2d;
+    --blue: #6f8fff;
+    --blue-soft: #27335f;
+    --blue-border: #88a1ff;
+    --dark: #0d0a0a;
+    --line: #5e4744;
+    --yellow: #f0c400;
+    --yellow-soft: #5f5312;
+    --stone: #d2c3bf;
+    --danger: #f87171;
+    background: var(--bg);
+    color: var(--text);
+}
+
+body.theme-comic {
+    --bg: #fff7cf;
+    --sidebar: #fff0a8;
+    --panel: #fffdf1;
+    --panel-soft: #ffe986;
+    --panel-light: #ffd95c;
+    --panel-pink: #ffc95a;
+    --text: #2b1d00;
+    --muted: #6a5200;
+    --accent: #c53b00;
+    --accent-dark: #9c2d00;
+    --blue: #2147ff;
+    --blue-soft: #cad4ff;
+    --blue-border: #1736c7;
+    --dark: #2a1500;
+    --line: #d6a600;
+    --yellow: #ffd400;
+    --yellow-soft: #fff0a3;
+    --stone: #5a4500;
+    --danger: #d62828;
+    background: var(--bg);
+    color: var(--text);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Times New Roman", Times, serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button,
+select,
+input,
+textarea {
+    font-family: "Times New Roman", Times, serif;
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    line-height: 1;
+    vertical-align: middle;
+}

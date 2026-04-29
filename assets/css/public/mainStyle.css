@@ -1,0 +1,329 @@
+body,
+body *,
+input,
+button,
+select,
+textarea {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+.headline {
+    font-family: "Times New Roman", Times, serif !important;
+}
+
+.story-detail-section {
+    padding: 7rem 1.5rem 4rem;
+}
+
+.story-detail-container {
+    max-width: 80rem;
+    margin: 0 auto;
+}
+
+.story-detail-grid {
+    display: grid;
+    grid-template-columns: 420px minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+}
+
+.story-cover-card {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: 1px solid #ffedd5;
+}
+
+.story-cover-image {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    display: block;
+}
+
+.story-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.story-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 600;
+}
+
+.story-badge-orange {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.story-badge-blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.story-detail-title {
+    font-size: 3rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #c2410c;
+    margin: 0 0 1rem;
+}
+
+.story-detail-desc {
+    color: #6b3b37;
+    font-size: 1.125rem;
+    line-height: 2rem;
+    margin: 0 0 1.5rem;
+}
+
+.story-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.story-stat-card {
+    background: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #ffedd5;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 1.25rem;
+}
+
+.story-stat-label {
+    font-size: 0.875rem;
+    color: #6b3b37;
+    margin: 0 0 0.25rem;
+}
+
+.story-stat-value {
+    font-weight: 800;
+    color: #c2410c;
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.story-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.story-action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.25s ease;
+    display: inline-block;
+}
+
+.story-action-btn-gradient {
+    background: linear-gradient(135deg, #ea580c, #fb923c);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.25);
+}
+
+.story-action-btn-gradient:hover {
+    opacity: 0.9;
+}
+
+.story-action-btn-soft {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.story-action-btn-soft:hover {
+    background: #fed7aa;
+}
+
+.story-action-btn-blue {
+    background: #bfdbfe;
+    color: #1f2937;
+}
+
+.story-action-btn-blue:hover {
+    background: #93c5fd;
+}
+
+.chapter-box {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    border: 1px solid #ffedd5;
+}
+
+.chapter-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+
+.chapter-box-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #c2410c;
+    margin: 0;
+}
+
+.chapter-save-link {
+    color: #c2410c;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.chapter-save-link:hover {
+    text-decoration: underline;
+}
+
+.chapter-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.chapter-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-radius: 1rem;
+    background: #fff7f6;
+    padding: 1rem 1.25rem;
+    border: 1px solid #ffedd5;
+}
+
+.chapter-part {
+    font-weight: 600;
+    color: #7a2f18;
+    margin: 0 0 0.25rem;
+}
+
+.chapter-name {
+    color: #6b3b37;
+    margin: 0;
+}
+
+.chapter-read-btn {
+    color: #ffffff;
+    background: #ea580c;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.chapter-read-btn:hover {
+    background: #c2410c;
+}
+
+.page-theme-wrap.theme-light {
+    background: #f8ece9;
+    color: #4b2c2c;
+}
+
+.page-theme-wrap.theme-dark {
+    background: #121212;
+    color: #f3f3f3;
+}
+
+.page-theme-wrap.theme-comic {
+    background: #fff4a8;
+    color: #2f2200;
+}
+
+.page-theme-wrap.theme-light .story-detail-section {
+    background: #f8ece9;
+}
+
+.page-theme-wrap.theme-dark .story-detail-section {
+    background: #121212;
+}
+
+.page-theme-wrap.theme-comic .story-detail-section {
+    background: #fff4a8;
+}
+
+.page-theme-wrap.theme-dark .story-cover-card,
+.page-theme-wrap.theme-dark .story-stat-card,
+.page-theme-wrap.theme-dark .chapter-box {
+    background: #1e1e1e;
+    color: #f3f3f3;
+    border-color: #333;
+}
+
+.page-theme-wrap.theme-dark .story-detail-title,
+.page-theme-wrap.theme-dark .story-stat-value,
+.page-theme-wrap.theme-dark .chapter-box-title,
+.page-theme-wrap.theme-dark .chapter-name,
+.page-theme-wrap.theme-dark .chapter-part,
+.page-theme-wrap.theme-dark .story-detail-desc,
+.page-theme-wrap.theme-dark .story-stat-label,
+.page-theme-wrap.theme-dark .chapter-save-link {
+    color: #f3f3f3;
+}
+
+.page-theme-wrap.theme-dark .story-action-btn-soft {
+    background: #2a2a2a;
+    color: #f3f3f3;
+    border: 1px solid #444;
+}
+
+.page-theme-wrap.theme-comic .story-cover-card,
+.page-theme-wrap.theme-comic .story-stat-card,
+.page-theme-wrap.theme-comic .chapter-box {
+    background: #fff8d6;
+    color: #2f2200;
+    border-color: #e7cf5f;
+}
+
+.page-theme-wrap.theme-light .story-cover-card,
+.page-theme-wrap.theme-light .story-stat-card,
+.page-theme-wrap.theme-light .chapter-box {
+    background: #ffffff;
+    color: #4b2c2c;
+}
+
+@media (max-width: 1024px) {
+    .story-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .story-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .story-cover-card {
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 768px) {
+    .story-detail-section {
+        padding: 7rem 1rem 4rem;
+    }
+
+    .story-detail-title {
+        font-size: 2.25rem;
+    }
+
+    .chapter-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .chapter-read-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

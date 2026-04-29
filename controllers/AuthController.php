@@ -53,11 +53,7 @@ class AuthController {
                     'role'      => $user['role'],
                 ];
 
-                if ($user['role'] === 'admin') {
-                    header('Location: admin.php');
-                } else {
-                    header('Location: index.php');
-                }
+                header('Location: index.php');
                 exit;
             }
         }

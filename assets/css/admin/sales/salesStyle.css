@@ -1,0 +1,31 @@
+.sales-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.summary-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px;
+}
+
+.summary-card h3 {
+    margin: 0 0 8px;
+    font-size: 30px;
+}
+
+.summary-card p {
+    margin: 0;
+    color: var(--subtext);
+    font-size: 17px;
+}
+
+@media (max-width: 800px) {
+    .sales-summary {
+        grid-template-columns: 1fr;
+    }
+}
