@@ -1,17 +1,4 @@
-# Module phần việc của Nguyễn Huy Phúc
-
-## 1) Mình đã bám theo đúng phần việc nào?
-Từ file Excel phân công nhóm, phần của **Nguyễn Huy Phúc** là:
-- Quản lý đơn hàng (admin)
-- Quản lý thanh toán
-- Thống kê / Báo cáo
-- Thanh toán online
-
-Repo GitHub công khai hiện tại đã có nhiều branch tên đúng theo nhóm chức năng, nhưng nội dung public nhìn thấy trên `main` và cả các branch bạn gửi vẫn chủ yếu là tài liệu (`reports/`, `DECUONG.MD`, `README.md`), chưa thấy mã nguồn PHP ứng dụng để mình nối trực tiếp vào project đang chạy. Vì vậy mình làm theo hướng **tạo trọn bộ module PHP/MySQL độc lập, dễ paste vào repo**.
-
-## 2) Trong gói này có gì?
-
-### Shared / dùng chung
+### Shared
 - `config/app.php`: cấu hình DB, BASE_URL, VNPAY sandbox
 - `config/database.php`: kết nối PDO
 - `helpers/functions.php`: hàm tiện ích, flash message, cart demo, format tiền
@@ -68,9 +55,7 @@ Chức năng có sẵn:
 - Hỗ trợ COD và VNPAY sandbox
 - Xử lý return callback và IPN callback của VNPAY
 
-## 3) Cấu trúc cart và session mình đang giả định
-Vì repo chưa có source giỏ hàng thật, mình đang giả định:
-
+## 3) Cấu trúc cart và session
 ```php
 $_SESSION['user'] = [
     'id' => 1,
@@ -89,9 +74,7 @@ $_SESSION['cart'] = [
 ];
 ```
 
-Nếu nhóm bạn đang lưu cart kiểu khác thì chỉ cần sửa trong `helpers/functions.php` ở hàm `cartItems()`.
-
-## 4) Cách chạy nhanh
+## 4) Cách chạy
 1. Tạo database và import:
    - `sql/phuc_modules.sql`
    - nếu muốn dữ liệu test thì import thêm `sql/demo_seed_optional.sql`
@@ -173,11 +156,3 @@ git push origin feature/checkout
 - Cần có tài khoản sandbox để lấy `vnp_TmnCode` và `HashSecret`.
 - URL thanh toán sandbox và API query sandbox đã được mình để sẵn trong config.
 - Nếu chưa có key sandbox thì module checkout vẫn chạy được với COD, còn VNPAY sẽ báo lỗi cấu hình.
-
-## 9) Mức độ hoàn thiện
-Gói này đủ để:
-- demo đồ án môn học
-- chia commit theo đúng branch của bạn
-- có nghiệp vụ admin order / payment / report / checkout tương đối trọn luồng
-
-Nếu repo của nhóm sau đó có source thật, bạn chỉ cần ghép logic này vào là được.

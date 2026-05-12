@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 function vnpayBuildSignedQuery(array $params): string
 {
-    ksort($params);
+    // Tạo chữ ký bảo mật SHA512 để đảm bảo tính toàn vẹn dữ liệu
+    ksort($params);//sort A-Z 
 
     $query = '';
     $hashdata = '';
@@ -25,6 +26,7 @@ function vnpayBuildSignedQuery(array $params): string
         $query .= urlencode((string) $key) . '=' . urlencode((string) $value) . '&';
     }
 
+    // Mã hóa SHA512 chống sửa đổi tham số trên URL
     $secureHash = hash_hmac('sha512', $hashdata, trim(VNPAY_HASH_SECRET));
 
     return rtrim($query, '&') . '&vnp_SecureHash=' . $secureHash;
@@ -32,6 +34,7 @@ function vnpayBuildSignedQuery(array $params): string
 
 function vnpayVerifyResponse(array $input): bool
 {
+    // Xác thực callback từ VNPay trả về, kiểm tra chữ ký để chống giả mạo URL
     if (!isset($input['vnp_SecureHash'])) {
         return false;
     }
@@ -60,12 +63,14 @@ function vnpayVerifyResponse(array $input): bool
 
     $calculatedHash = hash_hmac('sha512', $hashdata, trim(VNPAY_HASH_SECRET));
 
+    // Khớp mã Hash để xác nhận request đúng chuẩn từ VNPay
     return hash_equals($calculatedHash, $receivedHash);
 }
 
 function createVnpayPaymentUrl(array $order, array $payment, ?string $bankCode = null): string
 {
-    $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR']
+    // Khởi tạo URL chuyển hướng sang cổng thanh toán VNPay
+    $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR']// Lấy IP khách hàng
         ?? $_SERVER['REMOTE_ADDR']
         ?? '127.0.0.1';
 
@@ -85,7 +90,7 @@ function createVnpayPaymentUrl(array $order, array $payment, ?string $bankCode =
         'vnp_Version'    => '2.1.0',
         'vnp_Command'    => 'pay',
         'vnp_TmnCode'    => trim(VNPAY_TMN_CODE),
-        'vnp_Amount'     => (int) round(((float) $order['total_amount']) * 100),
+        'vnp_Amount'     => (int) round(((float) $order['total_amount']) * 100), // VNPay yêu cầu số tiền nhân 100
         'vnp_CreateDate' => (string) $payment['vnp_create_date'],
         'vnp_CurrCode'   => 'VND',
         'vnp_IpAddr'     => $clientIp,
@@ -106,6 +111,7 @@ function createVnpayPaymentUrl(array $order, array $payment, ?string $bankCode =
 
 function queryVnpayTransaction(array $payment): array
 {
+    // Truy vấn trạng thái giao dịch qua API
     $requestId = uniqid('query_', true);
     $requestId = substr(str_replace('.', '', $requestId), 0, 32);
 
@@ -143,6 +149,7 @@ function queryVnpayTransaction(array $payment): array
 
     $payload['vnp_SecureHash'] = hash_hmac('sha512', $hashData, trim(VNPAY_HASH_SECRET));
 
+    // Dùng cURL gọi Server-to-Server để đối soát giao dịch ngầm
     $ch = curl_init(VNPAY_QUERY_URL);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,

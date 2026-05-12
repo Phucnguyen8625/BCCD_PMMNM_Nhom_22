@@ -1,0 +1,17 @@
+﻿STT,Nhóm chức năng,Chức năng chi tiết,Mô tả công việc,Phụ trách chính,Ghi chú
+1,Admin,Quản lý người dùng,"Xây CRUD người dùng, phân quyền admin/user, khóa mở tài khoản, xem danh sách người dùng.",Nguyễn Dương Thế Bảo,Ưu tiên backend + giao diện bảng quản trị
+2,Admin,Quản lý danh mục truyện,"Thêm/sửa/xóa danh mục, phân loại thể loại truyện, liên kết danh mục với truyện.",Nguyễn Duy Khánh,Bao gồm validate dữ liệu
+3,Admin,Quản lý truyện tranh,"Thêm/sửa/xóa truyện, upload ảnh bìa/chapter, cập nhật trạng thái truyện, hiển thị danh sách truyện.",Nguyễn Duy Khánh,"Khối lượng lớn, cần hoàn thành sớm"
+4,Admin,Quản lý đơn hàng,"Xem, lọc, cập nhật trạng thái đơn hàng, tra cứu lịch sử mua truyện của user.",Nguyễn Huy Phúc,Gắn với nghiệp vụ thanh toán
+5,Admin,Quản lý thanh toán,"Theo dõi giao dịch, xác nhận thanh toán, đối soát trạng thái thanh toán thành công/thất bại.",Nguyễn Huy Phúc,Cần test callback và bảo mật
+6,Admin,Thống kê / Báo cáo,"Thống kê doanh thu, số lượng đơn hàng, truyện bán chạy, số user đăng ký.",Nguyễn Huy Phúc,"Có thể dùng biểu đồ, báo cáo theo ngày/tháng"
+7,User,Trang chủ,"Thiết kế giao diện trang chủ, banner, danh sách truyện mới/cập nhật/nổi bật.",Nguyễn Dương Thế Bảo,Thiên về frontend/UI
+8,User,Đăng ký / Đăng nhập,"Xây form đăng ký, đăng nhập, xác thực tài khoản, session/token, quên mật khẩu nếu có.",Nguyễn Dương Thế Bảo,Ưu tiên hoàn thành đầu tiên để test các chức năng khác
+9,User,Tìm kiếm truyện,"Tìm kiếm theo tên truyện, thể loại, tác giả; lọc và sắp xếp kết quả.",Nguyễn Dương Thế Bảo,Cần tối ưu trải nghiệm người dùng
+10,User,Giỏ hàng,"Thêm/xóa truyện khỏi giỏ, cập nhật số lượng/mục mua, tính tổng tiền đơn hàng.",Nguyễn Duy Khánh,Liên kết chặt với thanh toán
+11,User,Thanh toán online,"Tích hợp cổng thanh toán, tạo đơn thanh toán, xử lý kết quả giao dịch.",Nguyễn Huy Phúc,Cần môi trường test sandbox
+12,User,Quản lý đơn hàng,"Xem lịch sử mua, tra cứu trạng thái đơn, chi tiết đơn hàng đã đặt.",Nguyễn Duy Khánh,Có thể dùng chung API với admin
+13,User,Cập nhật thông tin cá nhân,"Sửa hồ sơ cá nhân, đổi mật khẩu, cập nhật avatar/thông liên hệ.",Nguyễn Dương Thế Bảo,Cần kiểm tra bảo mật thông tin
+14,User,Lọc truyện theo danh mục,"Hiển thị danh sách truyện theo từng thể loại, phân trang dữ liệu truyện.",Nguyễn Duy Khánh,Bổ sung dựa trên CategoryController
+15,User,Bộ sưu tập truyện (Collections),"Hiển thị các bộ sưu tập đặc biệt (Truyện Sale, Bán chạy, Combo, Pre-order).",Nguyễn Dương Thế Bảo,Bổ sung dựa trên CollectionController
+16,User,Tùy biến Skin (Dark/Light Mode),"Xây dựng tính năng chuyển đổi giao diện sáng/tối, lưu trạng thái bằng localStorage hoặc cookie.",Nguyễn Dương Thế Bảo,Đáp ứng yêu cầu môn học về tùy biến giao diện

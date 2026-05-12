@@ -13,15 +13,15 @@ class AdminOrderController {
     }
 
     public function index() {
-        $orders = $this->order->getAllOrders();
+        $orders = $this->order->getAllOrders(); // Lấy toàn bộ danh sách đơn hàng
         require_once __DIR__ . '/../views/admin/orders/index.php';
     }
 
     public function show() {
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
-            $order = $this->order->getOrderById($id);
-            $orderDetails = $this->order->getOrderDetails($id);
+            $order = $this->order->getOrderById($id); // Lấy thông tin chung của đơn hàng
+            $orderDetails = $this->order->getOrderDetails($id); // Lấy chi tiết các sản phẩm trong đơn
             if ($order) {
                 require_once __DIR__ . '/../views/admin/orders/show.php';
             } else {
@@ -35,7 +35,7 @@ class AdminOrderController {
             $id = $_POST['id'];
             $status = $_POST['status'];
             
-            $result = $this->order->updateStatus($id, $status);
+            $result = $this->order->updateStatus($id, $status); // Cập nhật trạng thái mới cho đơn hàng
             if ($result) {
                 header("Location: admin.php?controller=order&action=show&id=$id&success=Cập nhật trạng thái thành công");
             } else {

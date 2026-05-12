@@ -13,7 +13,7 @@ class AdminPaymentController {
     }
 
     public function index() {
-        $payments = $this->payment->getAllPayments();
+        $payments = $this->payment->getAllPayments(); // Lấy toàn bộ lịch sử giao dịch thanh toán
         require_once __DIR__ . '/../views/admin/payments/index.php';
     }
 
@@ -22,7 +22,7 @@ class AdminPaymentController {
             $id = $_POST['id'];
             $status = $_POST['status'];
             
-            $result = $this->payment->updatePaymentStatus($id, $status);
+            $result = $this->payment->updatePaymentStatus($id, $status); // Đối soát và cập nhật trạng thái thanh toán thủ công
             if ($result) {
                 header("Location: admin.php?controller=payment&action=index&success=Cập nhật trạng thái thành công");
             } else {

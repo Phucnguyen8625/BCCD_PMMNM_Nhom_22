@@ -33,7 +33,7 @@ class CheckoutController {
         
         foreach ($cart_session as $comic_id => $quantity) {
             $comicModel->id = $comic_id;
-            if ($comicModel->readOne()) {
+            if ($comicModel->readOne()) { // Lấy giá từ DB thay vì session để an toàn
                 $cart[] = [
                     'comic_id' => $comic_id,
                     'name' => $comicModel->name,
@@ -47,12 +47,12 @@ class CheckoutController {
         $categoryModel = new Category($db);
         $categories = $categoryModel->getAllActive();
 
-        // Get user session for pre-filling
+        //Lấy thông tin user từ session
         $currentUser = isset($_SESSION['user_login']) ? $_SESSION['user_login'] : null;
 
         require_once __DIR__ . '/../views/user/checkout/index.php';
     }
-
+    //lấy thông tin user
     public function process() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $name = $_POST['name'];
@@ -70,12 +70,12 @@ class CheckoutController {
             $database = new Database();
             $db = $database->getConnection();
             $comicModel = new Comic($db);
-
+            //set giá
             $totalAmount = 0;
             $cart = [];
             foreach ($cart_session as $comic_id => $quantity) {
                 $comicModel->id = $comic_id;
-                if ($comicModel->readOne()) {
+                if ($comicModel->readOne()) { // Lấy giá thực tế từ DB
                     $cart[] = [
                         'comic_id' => $comic_id,
                         'price' => $comicModel->price,
@@ -84,26 +84,26 @@ class CheckoutController {
                     $totalAmount += $comicModel->price * $quantity;
                 }
             }
-
-            $orderId = $this->order->createOrder($name, $phone, $email, $address, $totalAmount);
+            //lưu vào Database
+            $orderId = $this->order->createOrder($name, $phone, $email, $address, $totalAmount); // Khởi tạo đơn hàng mới
             
             foreach ($cart as $item) {
                 $this->order->addOrderDetail($orderId, $item['comic_id'], $item['quantity'], $item['price']);
             }
 
             // Xóa cart sau khi tạo đơn
-            unset($_SESSION['cart']);
+            unset($_SESSION['cart']); // Reset giỏ hàng
 
             if ($paymentMethod === 'vnpay') {
-                $vnp_txn_ref = 'ORD' . $orderId . '_' . time();
+                $vnp_txn_ref = 'ORD' . $orderId . '_' . time(); // Tạo mã GD duy nhất
                 $this->payment->createPayment($orderId, 'vnpay', $totalAmount, 'pending', $vnp_txn_ref);
                 
                 // Chuẩn bị dữ liệu cho VNPay Helper
                 $vnpOrder = ['id' => $orderId, 'total_amount' => $totalAmount];
                 $vnpPayment = ['transaction_code' => $vnp_txn_ref, 'vnp_create_date' => date('YmdHis')];
                 
-                $vnpayUrl = createVnpayPaymentUrl($vnpOrder, $vnpPayment);
-                header("Location: " . $vnpayUrl);
+                $vnpayUrl = createVnpayPaymentUrl($vnpOrder, $vnpPayment); // Build link VNPay
+                header("Location: " . $vnpayUrl); // Chuyển hướng người dùng sang VNPay
                 exit();
             } else {
                 $this->payment->createPayment($orderId, 'cod', $totalAmount, 'pending');
@@ -127,11 +127,11 @@ class CheckoutController {
 
     public function vnpay_return() {
         $vnp_data = $_GET;
-        if (vnpayVerifyResponse($vnp_data)) {
+        if (vnpayVerifyResponse($vnp_data)) { // Check chữ ký xem có đúng VNPay trả về không
             $order_info = explode('_', $vnp_data['vnp_TxnRef']);
             $orderId = str_replace('ORD', '', $order_info[0]);
             
-            if ($vnp_data['vnp_ResponseCode'] == '00') {
+            if ($vnp_data['vnp_ResponseCode'] == '00') { // 00 là mã giao dịch thành công của VNPay
                 // Thanh toán thành công
                 $this->payment->updateStatusByTxnRef($vnp_data['vnp_TxnRef'], 'success', $vnp_data['vnp_TransactionNo']);
                 header("Location: index.php?controller=checkout&action=success&order_id=$orderId&status=success");
